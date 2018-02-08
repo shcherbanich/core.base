@@ -1,11 +1,6 @@
 <?php
-/**
- * @link http://www.yiiframework.com/
- * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
- */
 
-namespace yii\base;
+namespace shcherbanich\core\components\base;
 
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -13,13 +8,7 @@ use yii\web\Link;
 use yii\web\Linkable;
 
 /**
- * ArrayableTrait provides a common implementation of the [[Arrayable]] interface.
- *
- * ArrayableTrait implements [[toArray()]] by respecting the field definitions as declared
- * in [[fields()]] and [[extraFields()]].
- *
- * @author Qiang Xue <qiang.xue@gmail.com>
- * @since 2.0
+ * @inheritdoc
  */
 trait ArrayableTrait
 {

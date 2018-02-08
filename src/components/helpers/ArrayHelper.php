@@ -1,6 +1,6 @@
 <?php
 
-namespace yii\helpers;
+namespace shcherbanich\core\components\helpers;
 
 use yii\base\Arrayable;
 
