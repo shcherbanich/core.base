@@ -56,6 +56,8 @@ class Serializer extends \yii\rest\Serializer
 
                 $extraFields = $model->extraFields();
 
+                $pk = key($model->getPrimaryKey(true));
+
                 foreach ($expand as $k => $extraField) {
 
                     if (!in_array($extraField, $extraFields)) {
@@ -67,15 +69,14 @@ class Serializer extends \yii\rest\Serializer
                 $models = $model->find()
                     ->joinWith($expand)
                     ->where($primaryKeys)
+                    ->asArray()
                     ->all();
 
                 $sortCurrentData = [];
 
                 foreach ($models as $i => $model) {
 
-                    $pk = $model->getPrimaryKey(true);
-
-                    $keyHash = md5(json_encode($pk));
+                    $keyHash = md5(json_encode([$pk => $model[$pk]]));
 
                     if (!isset($sortCurrentData[$keyHash])) {
 
@@ -112,7 +113,6 @@ class Serializer extends \yii\rest\Serializer
                     $returnModels[$i] = ArrayHelper::toArray($model);
                 }
             }
-
         }
 
         return $returnModels;
