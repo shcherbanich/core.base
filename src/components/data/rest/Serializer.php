@@ -111,7 +111,7 @@ class Serializer extends \yii\rest\Serializer
 
                     foreach($callbackExpands as $key => $callbackExpand){
 
-                        $models[$i][$key] = $callbackExpand($models[$i]);
+                        $models[$i][$key] = $callbackExpand($model);
                     }
                 }
 
