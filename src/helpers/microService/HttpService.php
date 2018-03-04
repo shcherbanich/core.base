@@ -44,6 +44,14 @@ class HttpService implements ServiceInterface {
     /**
      * @inheritdoc
      */
+    public function resetRequestHandlers(){
+
+        $this->requestHandlers = [];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function addRequestHandler($key, callable $handler = null){
 
         if($handler){
