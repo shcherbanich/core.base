@@ -102,7 +102,7 @@ class ProxyRestServiceController extends \yii\web\Controller
 
         $result = $response->getContent();
 
-        $responseData = $response->setResponseData();
+        $responseData = $response->getResponseData();
 
         Yii::$app->response->setStatusCode($responseData['status_code']);
 
