@@ -52,15 +52,18 @@ class ProxyRestServiceController extends \yii\base\Controller
             $sendParams[] = "{$key}={$param}";
         }
 
-        $serviceRequest->setCommand("{$this->controllerName}/{$id}?".implode('&', $sendParams));
+        $serviceRequest->setCommand(($id ? "{$this->controllerName}/{$id}" : "{$this->controllerName}" ).'?'.implode('&', $sendParams));
 
         Yii::$app->{$this->serviceName}->addRequestHandler('all', function($request){
 
-            foreach(\Yii::$app->request->headers as $name => $header){
+            foreach(\Yii::$app->request->headers as $name => $headers){
 
                 if(!in_array($name, ['host', 'content-length', 'connection', 'accept-encoding', 'accept'])) {
 
-                    $request->addHeaders([$name => $header]);
+                    foreach($headers as $header){
+
+                        $request->addHeaders([$name => $header]);
+                    }
                 }
             }
         });
@@ -71,6 +74,6 @@ class ProxyRestServiceController extends \yii\base\Controller
 
         $serviceRequest->setParams($sendParams);
 
-        return Yii::$app->{$this->serviceName}->sendRequest($serviceRequest, ['method' => Yii::$app->request->getMethod()]);
+        return Yii::$app->{$this->serviceName}->sendRequest($serviceRequest, ['method' => Yii::$app->request->getMethod()])->getContent();
     }
 }
