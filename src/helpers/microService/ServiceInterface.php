@@ -8,7 +8,13 @@ namespace shcherbanich\core\helpers\microService;
 interface ServiceInterface {
 
     /**
-     * Отправить запрос к микросервису
+     *
+     * @return void
+     */
+    public function resetRequestHandlers();
+
+    /**
+     * Добавить заголовок
      *
      * @param string $key
      *
