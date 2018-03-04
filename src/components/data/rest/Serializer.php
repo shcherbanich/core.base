@@ -62,13 +62,15 @@ class Serializer extends \yii\rest\Serializer
 
                 foreach ($expand as $k => $extraField) {
 
-                    if (!in_array($extraField, $extraFields)) {
+                    if (isset($extraFields[$extraField])){
+
+                        $callbackExpands[$extraField] = $extraFields[$extraField];
 
                         unset($expand[$k]);
                     }
-                    elseif (isset($extraFields[$extraField])){
+                    elseif (!in_array($extraField, $extraFields)) {
 
-                        $callbackExpands[$extraField] = $extraFields[$extraField];
+                        unset($expand[$k]);
                     }
                 }
 
