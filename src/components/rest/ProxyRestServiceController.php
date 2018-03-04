@@ -4,6 +4,8 @@ namespace shcherbanich\core\components\rest;
 
 use Yii;
 use yii\base\InvalidParamException;
+use yii\filters\ContentNegotiator;
+use yii\web\Response;
 
 class ProxyRestServiceController extends \yii\base\Controller
 {
@@ -39,6 +41,22 @@ class ProxyRestServiceController extends \yii\base\Controller
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'contentNegotiator' => [
+                'class' => ContentNegotiator::className(),
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
+                    'application/xml' => Response::FORMAT_XML,
+                ],
+            ]
+        ];
+    }
+
+    /**
      * @inheritdoc
      */
     public function runAction($id, $params = []){
@@ -54,7 +72,7 @@ class ProxyRestServiceController extends \yii\base\Controller
 
         $serviceRequest->setCommand(($id ? "{$this->controllerName}/{$id}" : "{$this->controllerName}" ).'?'.implode('&', $sendParams));
 
-        Yii::$app->{$this->serviceName}->addRequestHandler('all', function($request){
+        Yii::$app->{$this->serviceName}->addRequestHandler('auth', function($request){
 
             foreach(\Yii::$app->request->headers as $name => $headers){
 
