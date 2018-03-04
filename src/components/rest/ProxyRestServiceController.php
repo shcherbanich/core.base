@@ -69,14 +69,7 @@ class ProxyRestServiceController extends \yii\web\Controller
 
         $serviceRequest = new \shcherbanich\core\helpers\microService\Request;
 
-        $sendParams = [];
-
-        foreach ($params as $key => $param){
-
-            $sendParams[] = "{$key}={$param}";
-        }
-
-        $serviceRequest->setCommand(($id ? "{$this->controllerName}/{$id}" : "{$this->controllerName}" ).'?'.implode('&', $sendParams));
+        $serviceRequest->setCommand(($id ? "{$this->controllerName}/{$id}" : "{$this->controllerName}" ).'?'.Yii::$app->request->getQueryString());
 
         Yii::$app->{$this->serviceName}->addRequestHandler('auth', function($request){
 
@@ -100,15 +93,21 @@ class ProxyRestServiceController extends \yii\web\Controller
 
         $response = Yii::$app->{$this->serviceName}->sendRequest($serviceRequest, ['method' => Yii::$app->request->getMethod()]);
 
-        $result = $response->getContent();
-
         $responseData = $response->getResponseData();
+
+        $result = $response->getData();
 
         Yii::$app->response->setStatusCode($responseData['status_code']);
 
         Yii::$app->response->format = $responseData['format'];
 
-        Yii::$app->response->headers = $responseData['headers'];
+        foreach($responseData['headers'] as $name => $headers){
+
+            foreach($headers as $header){
+
+                Yii::$app->response->headers->add($name, $header);
+            }
+        }
 
         return $this->afterAction((new Action($id, $this)), $result);
     }
@@ -119,6 +118,7 @@ class ProxyRestServiceController extends \yii\web\Controller
     public function afterAction($action, $result)
     {
         $result = parent::afterAction($action, $result);
+
         return $this->serializeData($result);
     }
 
