@@ -13,6 +13,22 @@ interface ResponseInterface {
     const FORMAT_JSON = 'json';
 
     /**
+     * Установить дополнительные данные ответа на запрос
+     *
+     * @param string $data
+     *
+     * @return void
+     */
+    public function setResponseData($data);
+
+    /**
+     * Получить дополнительные данные ответа на запрос
+     *
+     * @return array|null
+     */
+    public function getResponseData();
+
+    /**
      * Установить статус ответа
      *
      * @param string $status

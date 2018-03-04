@@ -3,12 +3,18 @@
 namespace shcherbanich\core\components\rest;
 
 use Yii;
+use yii\base\Action;
 use yii\base\InvalidParamException;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
 
-class ProxyRestServiceController extends \yii\base\Controller
+class ProxyRestServiceController extends \yii\web\Controller
 {
+
+    /**
+     * @var string|array the configuration for creating the serializer that formats the response data.
+     */
+    public $serializer = 'shcherbanich\core\components\data\rest\Serializer';
 
     public $controllerName = '';
 
@@ -92,6 +98,39 @@ class ProxyRestServiceController extends \yii\base\Controller
 
         $serviceRequest->setParams($sendParams);
 
-        return Yii::$app->{$this->serviceName}->sendRequest($serviceRequest, ['method' => Yii::$app->request->getMethod()])->getContent();
+        $response = Yii::$app->{$this->serviceName}->sendRequest($serviceRequest, ['method' => Yii::$app->request->getMethod()]);
+
+        $result = $response->getContent();
+
+        $responseData = $response->setResponseData();
+
+        Yii::$app->response->setStatusCode($responseData['status_code']);
+
+        Yii::$app->response->format = $responseData['format'];
+
+        Yii::$app->response->headers = $responseData['headers'];
+
+        return $this->afterAction((new Action($id, $this)), $result);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function afterAction($action, $result)
+    {
+        $result = parent::afterAction($action, $result);
+        return $this->serializeData($result);
+    }
+
+    /**
+     * Serializes the specified data.
+     * The default implementation will create a serializer based on the configuration given by [[serializer]].
+     * It then uses the serializer to serialize the given data.
+     * @param mixed $data the data to be serialized
+     * @return mixed the serialized data.
+     */
+    protected function serializeData($data)
+    {
+        return Yii::createObject($this->serializer)->serialize($data);
     }
 }

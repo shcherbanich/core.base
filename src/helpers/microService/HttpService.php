@@ -102,7 +102,12 @@ class HttpService implements ServiceInterface {
 
         return new Response([
             'status' => in_array($httpResponse->getStatusCode(), [200, 201]) ? Response::STATUS_SUCCESS : Response::STATUS_FAIL,
-            'content' => $httpResponse->getContent()
+            'content' => $httpResponse->getContent(),
+            'response_data' => [
+                'format' => $httpResponse->getFormat(),
+                'headers' => $httpResponse->getHeaders(),
+                'status_code' => $httpResponse->getStatusCode()
+            ]
         ]);
     }
 }
