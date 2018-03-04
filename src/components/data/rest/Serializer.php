@@ -66,9 +66,9 @@ class Serializer extends \yii\rest\Serializer
 
                         unset($expand[$k]);
                     }
-                    elseif (isset($extraFields[$expand])){
+                    elseif (isset($extraFields[$extraField])){
 
-                        $callbackExpands[$expand] = $extraFields[$expand];
+                        $callbackExpands[$extraField] = $extraFields[$extraField];
                     }
                 }
 
