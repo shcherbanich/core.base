@@ -58,11 +58,17 @@ class Serializer extends \yii\rest\Serializer
 
                 $pk = $model->getPrimaryKey(true);
 
+                $callbackExpands = [];
+
                 foreach ($expand as $k => $extraField) {
 
                     if (!in_array($extraField, $extraFields)) {
 
                         unset($expand[$k]);
+                    }
+                    elseif (isset($extraFields[$expand])){
+
+                        $callbackExpands[$expand] = $extraFields[$expand];
                     }
                 }
 
@@ -99,6 +105,11 @@ class Serializer extends \yii\rest\Serializer
                     } elseif (is_array($model)) {
 
                         $models[$i] = ArrayHelper::toArray($model);
+                    }
+
+                    foreach($callbackExpands as $key => $callbackExpand){
+
+                        $models[$i][$key] = $callbackExpand($models[$i]);
                     }
                 }
 
