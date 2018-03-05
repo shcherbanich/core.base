@@ -81,7 +81,9 @@ class StatisticSerializer extends \yii\rest\Serializer
             }
             else{
 
-                $childCallbackExpands[$exp_extraField[0]] = $exp_extraField[1];
+                $childCallbackExpands[$exp_extraField[0]] = isset($childCallbackExpands[$exp_extraField[0]]) ? $childCallbackExpands[$exp_extraField[0]] : [];
+
+                $childCallbackExpands[$exp_extraField[0]][] = $exp_extraField[1];
             }
         }
 
