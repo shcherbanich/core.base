@@ -89,7 +89,7 @@ class StatisticSerializer extends \yii\rest\Serializer
 
             foreach($callbackExpands as $key => $callbackExpand){
 
-                $c_expands = isset($childCallbackExpands[$callbackExpand]) ? $childCallbackExpands[$callbackExpand] : [];
+                $c_expands = isset($childCallbackExpands[$key]) ? $childCallbackExpands[$key] : [];
 
                 $models[$i][$key] = $callbackExpand(json_decode(json_encode($model)), $c_expands);
             }
