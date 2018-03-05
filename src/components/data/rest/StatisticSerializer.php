@@ -14,6 +14,26 @@ class StatisticSerializer extends \yii\rest\Serializer
     {
         list ($fields, $expand) = $this->getRequestedFields();
 
+        $callbackExpands = [];
+
+        $model = current($models);
+
+        $extraFields = $model->extraFields();
+
+        foreach ($expand as $k => $extraField) {
+
+            if (isset($extraFields[$extraField])){
+
+                $callbackExpands[$extraField] = $extraFields[$extraField];
+
+                unset($expand[$k]);
+            }
+            elseif (!in_array($extraField, $extraFields)) {
+
+                unset($expand[$k]);
+            }
+        }
+
         foreach ($models as $i => $model) {
 
             if ($fields) {
@@ -29,6 +49,11 @@ class StatisticSerializer extends \yii\rest\Serializer
                 }
 
                 $models[$i] = $filterModel;
+
+                foreach($callbackExpands as $key => $callbackExpand){
+
+                    $models[$i][$key] = $callbackExpand($model);
+                }
             }
         }
         return $models;

@@ -38,12 +38,6 @@ class ProxyRestServiceController extends \yii\web\Controller
         }
 
         Yii::$app->user->enableSession = false;
-
-        $headers = Yii::$app->response->headers;
-
-        $headers->add('Access-Control-Allow-Origin', '*');
-
-        $headers->add('Access-Control-Allow-Credentials', 'true');
     }
 
     /**
