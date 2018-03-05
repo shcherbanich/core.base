@@ -17,10 +17,14 @@ class StatisticSerializer extends \yii\rest\Serializer
      * The default implementation will handle [[Model]] and [[DataProviderInterface]].
      * You may override this method to support more object types.
      * @param mixed $data the data to be serialized.
+     * @param string $className.
      * @return mixed the converted data.
      */
     public function serialize($data, $className = '')
     {
+
+        $this->className = $className;
+
         if ($data instanceof Model && $data->hasErrors()) {
             return $this->serializeModelErrors($data);
         } elseif ($data instanceof Arrayable) {
@@ -70,26 +74,12 @@ class StatisticSerializer extends \yii\rest\Serializer
 
         foreach ($models as $i => $model) {
 
-            if ($fields) {
+            foreach($callbackExpands as $key => $callbackExpand){
 
-                $filterModel = [];
-
-                foreach ($model as $field => $value) {
-
-                    if (in_array($field, $fields)) {
-
-                        $filterModel[$field] = $value;
-                    }
-                }
-
-                $models[$i] = $filterModel;
-
-                foreach($callbackExpands as $key => $callbackExpand){
-
-                    $models[$i][$key] = $callbackExpand($model);
-                }
+                $models[$i][$key] = $callbackExpand($model);
             }
         }
+
         return $models;
     }
 }
