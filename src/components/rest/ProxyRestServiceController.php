@@ -6,7 +6,6 @@ use Yii;
 use yii\base\Action;
 use yii\base\InvalidParamException;
 use yii\filters\ContentNegotiator;
-use yii\filters\VerbFilter;
 use yii\web\Response;
 
 class ProxyRestServiceController extends \yii\web\Controller
@@ -44,6 +43,12 @@ class ProxyRestServiceController extends \yii\web\Controller
         }
 
         Yii::$app->user->enableSession = false;
+
+        $headers = Yii::$app->response->headers;
+
+        $headers->add('Access-Control-Allow-Origin', '*');
+
+        $headers->add('Access-Control-Allow-Headers', 'Authorization');
     }
 
     /**
@@ -51,6 +56,7 @@ class ProxyRestServiceController extends \yii\web\Controller
      */
     public function behaviors()
     {
+
         return [
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
@@ -58,12 +64,19 @@ class ProxyRestServiceController extends \yii\web\Controller
                     'application/json' => Response::FORMAT_JSON,
                     'application/xml' => Response::FORMAT_XML,
                 ],
-            ],
-            'verbFilter' => [
-                'class' => VerbFilter::className(),
-                'actions' => []
-            ],
+            ]
         ];
+    }
+
+    public function actions()
+    {
+        $actions = parent::actions();
+
+        $actions['options'] = [
+            'class' => 'yii\rest\OptionsAction'
+        ];
+
+        return $actions;
     }
 
     /**
@@ -109,7 +122,7 @@ class ProxyRestServiceController extends \yii\web\Controller
 
             foreach($headers as $header){
 
-                if(!in_array($name, ['connection', 'http-code', 'server', 'set-cookie'])) {
+                if(!in_array($name, ['connection', 'http-code', 'server', 'set-cookie', 'access-control-allow-origin'])) {
 
                     Yii::$app->response->headers->add($name, $header);
                 }
