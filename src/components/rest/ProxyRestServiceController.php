@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Action;
 use yii\base\InvalidParamException;
 use yii\filters\ContentNegotiator;
+use yii\filters\VerbFilter;
 use yii\web\Response;
 
 class ProxyRestServiceController extends \yii\web\Controller
@@ -19,6 +20,11 @@ class ProxyRestServiceController extends \yii\web\Controller
     public $controllerName = '';
 
     public $serviceName = '';
+
+    /**
+     * @inheritdoc
+     */
+    public $enableCsrfValidation = false;
 
     /**
      * @inheritdoc
@@ -52,7 +58,11 @@ class ProxyRestServiceController extends \yii\web\Controller
                     'application/json' => Response::FORMAT_JSON,
                     'application/xml' => Response::FORMAT_XML,
                 ],
-            ]
+            ],
+            'verbFilter' => [
+                'class' => VerbFilter::className(),
+                'actions' => []
+            ],
         ];
     }
 
@@ -69,7 +79,7 @@ class ProxyRestServiceController extends \yii\web\Controller
 
             foreach(\Yii::$app->request->headers as $name => $headers){
 
-                if(in_array($name, ['authorization', 'content-Type', 'access-control-allow-headers'])) {
+                if(in_array($name, ['authorization', 'content-Type'])) {
 
                     foreach($headers as $header){
 
@@ -99,7 +109,10 @@ class ProxyRestServiceController extends \yii\web\Controller
 
             foreach($headers as $header){
 
-                Yii::$app->response->headers->add($name, $header);
+                if(!in_array($name, ['connection', 'http-code', 'server'])) {
+
+                    Yii::$app->response->headers->add($name, $header);
+                }
             }
         }
 
