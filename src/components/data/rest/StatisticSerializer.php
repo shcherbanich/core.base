@@ -8,6 +8,9 @@ use yii\data\DataProviderInterface;
 
 class StatisticSerializer extends \yii\rest\Serializer
 {
+    /**
+     * Model class name
+     */
     public $className;
 
     /**
