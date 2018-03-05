@@ -109,7 +109,7 @@ class ProxyRestServiceController extends \yii\web\Controller
 
             foreach($headers as $header){
 
-                if(!in_array($name, ['connection', 'http-code', 'server'])) {
+                if(!in_array($name, ['connection', 'http-code', 'server', 'set-cookie'])) {
 
                     Yii::$app->response->headers->add($name, $header);
                 }
