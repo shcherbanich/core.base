@@ -50,6 +50,8 @@ class StatisticSerializer extends \yii\rest\Serializer
 
         $callbackExpands = [];
 
+        $childCallbackExpands = [];
+
         if($this->className) {
 
             $model = new $this->className;
@@ -63,15 +65,23 @@ class StatisticSerializer extends \yii\rest\Serializer
 
         foreach ($expand as $k => $extraField) {
 
-            if (isset($extraFields[$extraField])){
+            $exp_extraField = explode('.', $extraField);
 
-                $callbackExpands[$extraField] = $extraFields[$extraField];
+            if(!isset($exp_extraField[1])) {
 
-                unset($expand[$k]);
+                if (isset($extraFields[$extraField])) {
+
+                    $callbackExpands[$extraField] = $extraFields[$extraField];
+
+                    unset($expand[$k]);
+                } elseif (!in_array($extraField, $extraFields)) {
+
+                    unset($expand[$k]);
+                }
             }
-            elseif (!in_array($extraField, $extraFields)) {
+            else{
 
-                unset($expand[$k]);
+                $childCallbackExpands[$exp_extraField[0]] = $exp_extraField[1];
             }
         }
 
@@ -79,7 +89,9 @@ class StatisticSerializer extends \yii\rest\Serializer
 
             foreach($callbackExpands as $key => $callbackExpand){
 
-                $models[$i][$key] = $callbackExpand(json_decode(json_encode($model)));
+                $c_expands = isset($childCallbackExpands[$callbackExpand]) ? $childCallbackExpands[$callbackExpand] : [];
+
+                $models[$i][$key] = $callbackExpand(json_decode(json_encode($model)), $c_expands);
             }
         }
 
