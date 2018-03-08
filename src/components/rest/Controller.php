@@ -35,7 +35,9 @@ class Controller extends \yii\rest\Controller
 
         $headers = Yii::$app->response->headers;
 
-        $headers->add('Access-Control-Allow-Origin', '*');
+        $http_origin = isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] ? $_SERVER['HTTP_ORIGIN'] : '*';
+
+        $headers->add('Access-Control-Allow-Origin', $http_origin);
 
         $headers->add('Access-Control-Allow-Credentials', 'true');
     }
