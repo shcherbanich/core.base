@@ -123,7 +123,17 @@ class ProxyRestServiceController extends \yii\web\Controller
 
             foreach($headers as $header){
 
-                if(!in_array($name, ['connection', 'http-code', 'server', 'set-cookie', 'access-control-allow-origin', 'access-control-allow-method'])) {
+                if(!in_array($name, [
+                    'connection',
+                    'http-code',
+                    'server',
+                    'set-cookie',
+                    'access-control-allow-origin',
+                    'access-control-allow-method',
+                    'X-Frame-Options',
+                    'X-Content-Type-Option',
+                    'Strict-Transport-Security'
+                ])) {
 
                     Yii::$app->response->headers->add($name, $header);
                 }
