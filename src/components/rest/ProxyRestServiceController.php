@@ -130,9 +130,9 @@ class ProxyRestServiceController extends \yii\web\Controller
                     'set-cookie',
                     'access-control-allow-origin',
                     'access-control-allow-method',
-                    'X-Frame-Options',
-                    'X-Content-Type-Option',
-                    'Strict-Transport-Security'
+                    'x-frame-options',
+                    'x-content-type-option',
+                    'strict-transport-security'
                 ])) {
 
                     Yii::$app->response->headers->add($name, $header);
