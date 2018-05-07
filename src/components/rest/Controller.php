@@ -2,6 +2,7 @@
 
 namespace shcherbanich\core\components\rest;
 
+use shcherbanich\core\components\Base\Translatable;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecordInterface;
@@ -349,6 +350,32 @@ class Controller extends \yii\rest\Controller
         foreach($fields as $field){
 
             $response[$field] = isset($labels[$field]) ? $labels[$field] : $field;
+        }
+
+        return $response;
+    }
+
+    public function actionTranslatableFields(){
+
+        $response = [];
+
+        $modelClass = new $this->modelClass;
+
+        if($modelClass instanceof Translatable) {
+
+            $tmp_response = $modelClass::translatableAttributes();
+
+            $fields = $modelClass->fields();
+
+            $fields = $fields ? $fields : $modelClass->attributes();
+
+            foreach($fields as $field){
+
+                if(in_array($field, $tmp_response)) {
+
+                    $response[] = $field;
+                }
+            }
         }
 
         return $response;
