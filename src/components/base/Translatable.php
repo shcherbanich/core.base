@@ -1,6 +1,6 @@
 <?php
 
-namespace shcherbanich\core\components\Base;
+namespace shcherbanich\core\components\base;
 
 interface Translatable
 {
