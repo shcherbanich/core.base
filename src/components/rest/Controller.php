@@ -334,6 +334,26 @@ class Controller extends \yii\rest\Controller
         return $actions;
     }
 
+    public function actionFields(){
+
+        $response = [];
+
+        $modelClass = new $this->modelClass;
+
+        $fields = $modelClass->fields();
+
+        $fields = $fields ? $fields : $modelClass->attributes();
+
+        $labels = $modelClass->attributeLabels();
+
+        foreach($fields as $field){
+
+            $response[$field] = isset($labels[$field]) ? $labels[$field] : $field;
+        }
+
+        return $response;
+    }
+
     public function beforeAction($action)
     {
         $beforeAction = parent::beforeAction($action);
@@ -359,6 +379,4 @@ class Controller extends \yii\rest\Controller
 
         return $scope;
     }
-
-
 }
