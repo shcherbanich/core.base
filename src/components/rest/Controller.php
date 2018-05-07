@@ -392,7 +392,7 @@ class Controller extends \yii\rest\Controller
                 }
                 elseif(in_array($key, $translatable_attributes)){
 
-                    $response[] = $field;
+                    $response[] = $key;
                 }
             }
         }
