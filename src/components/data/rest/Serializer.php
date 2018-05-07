@@ -3,7 +3,9 @@
 namespace shcherbanich\core\components\data\rest;
 
 use yii\base\Arrayable;
+use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
+use yii\web\Link;
 
 class Serializer extends \yii\rest\Serializer
 {
@@ -135,5 +137,28 @@ class Serializer extends \yii\rest\Serializer
         }
 
         return $returnModels;
+    }
+
+    /**
+     * Serializes a pagination into an array.
+     * @param Pagination $pagination
+     * @return array the array representation of the pagination
+     * @see addPaginationHeaders()
+     */
+    protected function serializePagination($pagination)
+    {
+        $headers = $this->request->getHeaders();
+
+        $x_linkable = $headers->get('X-Linkable');
+
+        return [
+            $this->linksEnvelope => $x_linkable !== 'disabled' ? Link::serialize($pagination->getLinks(true)) : null,
+            $this->metaEnvelope => [
+                'totalCount' => $pagination->totalCount,
+                'pageCount' => $pagination->getPageCount(),
+                'currentPage' => $pagination->getPage() + 1,
+                'perPage' => $pagination->getPageSize(),
+            ],
+        ];
     }
 }
