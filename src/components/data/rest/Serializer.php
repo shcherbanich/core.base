@@ -2,6 +2,7 @@
 
 namespace shcherbanich\core\components\data\rest;
 
+use shcherbanich\core\components\Base\Translatable;
 use yii\base\Arrayable;
 use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
@@ -136,6 +137,11 @@ class Serializer extends \yii\rest\Serializer
                 if ($model instanceof Arrayable) {
 
                     $returnModels[$i] = $model->toArray($fields, []);
+
+                    if ($model instanceof Translatable) {
+
+                        $model::translate($returnModels[$i], \Yii::$app->language);
+                    }
 
                     if($x_linkable !== 'enabled'){
 
