@@ -363,7 +363,7 @@ class Controller extends \yii\rest\Controller
 
         if($modelClass instanceof Translatable) {
 
-            $tmp_response = $modelClass::translatableAttributes();
+            $translatable_attributes = $modelClass::translatableAttributes();
 
             $fields = $modelClass->fields();
 
@@ -371,7 +371,7 @@ class Controller extends \yii\rest\Controller
 
             foreach($fields as $field){
 
-                if(in_array($field, $tmp_response)) {
+                if(in_array($field, $translatable_attributes)) {
 
                     $response[] = $field;
                 }
