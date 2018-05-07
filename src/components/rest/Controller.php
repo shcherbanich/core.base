@@ -335,6 +335,11 @@ class Controller extends \yii\rest\Controller
         return $actions;
     }
 
+    /**
+     * Список полей
+     *
+     * @return array
+     */
     public function actionFields(){
 
         $response = [];
@@ -357,6 +362,11 @@ class Controller extends \yii\rest\Controller
         return $response;
     }
 
+    /**
+     * Список полей доступных для перевода
+     *
+     * @return array
+     */
     public function actionTranslatableFields(){
 
         $response = [];
