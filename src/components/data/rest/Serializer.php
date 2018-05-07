@@ -138,7 +138,7 @@ class Serializer extends \yii\rest\Serializer
 
                     if ($model instanceof Translatable) {
 
-                        $model::translate($returnModels[$i], \Yii::$app->language);
+                        $returnModels[$i] = $model::translate($returnModels[$i], \Yii::$app->language);
                     }
 
                     if($x_linkable !== 'enabled'){
