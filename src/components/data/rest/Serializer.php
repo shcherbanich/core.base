@@ -29,7 +29,7 @@ class Serializer extends \yii\rest\Serializer
 
         if ($x_linkable !== 'enabled') {
 
-            unset($serialized_model[$i]['_links']);
+            unset($serialized_model['_links']);
         }
 
         return $serialized_model;
