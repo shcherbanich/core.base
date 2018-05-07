@@ -127,38 +127,28 @@ class Serializer extends \yii\rest\Serializer
             }
         } else {
 
+            $headers = $this->request->getHeaders();
+
+            $x_linkable = $headers->get('X-Linkable');
+
             foreach ($models as $i => $model) {
+
                 if ($model instanceof Arrayable) {
+
                     $returnModels[$i] = $model->toArray($fields, []);
+
+                    if($x_linkable === 'disabled'){
+
+                        unset($returnModels[$i]['_links']);
+                    }
+
                 } elseif (is_array($model)) {
+
                     $returnModels[$i] = ArrayHelper::toArray($model);
                 }
             }
         }
 
         return $returnModels;
-    }
-
-    /**
-     * Serializes a pagination into an array.
-     * @param Pagination $pagination
-     * @return array the array representation of the pagination
-     * @see addPaginationHeaders()
-     */
-    protected function serializePagination($pagination)
-    {
-        $headers = $this->request->getHeaders();
-
-        $x_linkable = $headers->get('X-Linkable');
-
-        return [
-            $this->linksEnvelope => $x_linkable !== 'disabled' ? Link::serialize($pagination->getLinks(true)) : null,
-            $this->metaEnvelope => [
-                'totalCount' => $pagination->totalCount,
-                'pageCount' => $pagination->getPageCount(),
-                'currentPage' => $pagination->getPage() + 1,
-                'perPage' => $pagination->getPageSize(),
-            ],
-        ];
     }
 }
