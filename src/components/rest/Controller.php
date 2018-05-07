@@ -383,7 +383,14 @@ class Controller extends \yii\rest\Controller
 
             foreach($fields as $key => $field){
 
-                if(is_string($field) && ( in_array($field, $translatable_attributes) || in_array($key, $translatable_attributes) ) ) {
+                if(is_string($field)) {
+
+                    if(in_array($field, $translatable_attributes)) {
+
+                        $response[] = $field;
+                    }
+                }
+                elseif(in_array($key, $translatable_attributes)){
 
                     $response[] = $field;
                 }
