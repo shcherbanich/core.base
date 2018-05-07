@@ -137,7 +137,7 @@ class Serializer extends \yii\rest\Serializer
 
                     $returnModels[$i] = $model->toArray($fields, []);
 
-                    if($x_linkable === 'disabled'){
+                    if($x_linkable !== 'enabled'){
 
                         unset($returnModels[$i]['_links']);
                     }
