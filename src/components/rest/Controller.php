@@ -381,9 +381,9 @@ class Controller extends \yii\rest\Controller
 
             $fields = $fields ? $fields : $modelClass->attributes();
 
-            foreach($fields as $field){
+            foreach($fields as $key => $field){
 
-                if(is_string($field) && in_array($field, $translatable_attributes)) {
+                if(is_string($field) && ( in_array($field, $translatable_attributes) || in_array($key, $translatable_attributes) ) ) {
 
                     $response[] = $field;
                 }
