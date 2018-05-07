@@ -10,6 +10,32 @@ class Serializer extends \yii\rest\Serializer
 {
 
     /**
+     * Serializes a model object.
+     * @param Arrayable $model
+     * @return array the array representation of the model
+     */
+    protected function serializeModel($model)
+    {
+        $serialized_model = parent::serializeModel($model);
+
+        $headers = $this->request->getHeaders();
+
+        $x_linkable = $headers->get('X-Linkable');
+
+        if ($model instanceof Translatable) {
+
+            $serialized_model = $model::translate($serialized_model, \Yii::$app->language);
+        }
+
+        if ($x_linkable !== 'enabled') {
+
+            unset($serialized_model[$i]['_links']);
+        }
+
+        return $serialized_model;
+    }
+
+    /**
      * Serializes a set of models.
      * @param array $models
      * @return array the array representation of the models
