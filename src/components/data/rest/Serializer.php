@@ -4,9 +4,7 @@ namespace shcherbanich\core\components\data\rest;
 
 use shcherbanich\core\components\Base\Translatable;
 use yii\base\Arrayable;
-use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
-use yii\web\Link;
 
 class Serializer extends \yii\rest\Serializer
 {

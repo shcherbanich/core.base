@@ -347,7 +347,9 @@ class Controller extends \yii\rest\Controller
 
         $labels = $modelClass->attributeLabels();
 
-        foreach($fields as $field){
+        foreach($fields as $key => $field){
+
+            $field = is_string($field) ? $field : $key;
 
             $response[$field] = isset($labels[$field]) ? $labels[$field] : $field;
         }
@@ -371,7 +373,7 @@ class Controller extends \yii\rest\Controller
 
             foreach($fields as $field){
 
-                if(in_array($field, $translatable_attributes)) {
+                if(is_string($field) && in_array($field, $translatable_attributes)) {
 
                     $response[] = $field;
                 }
