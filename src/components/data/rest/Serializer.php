@@ -97,7 +97,7 @@ class Serializer extends \yii\rest\Serializer
 
                             $groupExpandsClasses[$extraField] = new $extraFields[$extraField];
                         }
-                        elseif(is_callable($extraFields)) {
+                        elseif(is_callable($extraFields[$extraField])) {
 
                             $callbackExpands[$extraField] = $extraFields[$extraField];
                         }
