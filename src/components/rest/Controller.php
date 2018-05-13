@@ -313,7 +313,8 @@ class Controller extends \yii\rest\Controller
         ];
 
         $actions['options'] = [
-            'class' => 'yii\rest\OptionsAction'
+            'class' => 'yii\rest\OptionsAction',
+            'collectionOptions' => ['GET', 'POST', 'HEAD', 'OPTIONS', 'DELETE']
         ];
 
         $actions['delete-all'] = [
