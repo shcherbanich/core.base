@@ -162,11 +162,20 @@ class Serializer extends \yii\rest\Serializer
                     $models = $groupExpandsClass->getModels();
                 }
 
+                $headers = $this->request->getHeaders();
+
+                $x_linkable = $headers->get('X-Linkable');
+
                 foreach ($sortNeed as $k => $hash) {
 
                     if (isset($sortCurrentData[$hash]) && isset($models[$sortCurrentData[$hash]])) {
 
                         $returnModels[$k] = $models[$sortCurrentData[$hash]];
+
+                        if($x_linkable !== 'enabled'){
+
+                            unset($returnModels[$k]['_links']);
+                        }
                     }
                 }
             }
@@ -187,14 +196,14 @@ class Serializer extends \yii\rest\Serializer
                         $returnModels[$i] = $model::translate($returnModels[$i], \Yii::$app->language);
                     }
 
-                    if($x_linkable !== 'enabled'){
-
-                        unset($returnModels[$i]['_links']);
-                    }
-
                 } elseif (is_array($model)) {
 
                     $returnModels[$i] = ArrayHelper::toArray($model);
+                }
+
+                if($x_linkable !== 'enabled'){
+
+                    unset($returnModels[$i]['_links']);
                 }
             }
         }
