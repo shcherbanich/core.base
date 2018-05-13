@@ -47,6 +47,10 @@ class Serializer extends \yii\rest\Serializer
 
         $returnModels = [];
 
+        $headers = $this->request->getHeaders();
+
+        $x_linkable = $headers->get('X-Linkable');
+
         if ($expand) {
 
             $primaryKeys = [];
@@ -162,10 +166,6 @@ class Serializer extends \yii\rest\Serializer
                     $models = $groupExpandsClass->getModels();
                 }
 
-                $headers = $this->request->getHeaders();
-
-                $x_linkable = $headers->get('X-Linkable');
-
                 foreach ($sortNeed as $k => $hash) {
 
                     if (isset($sortCurrentData[$hash]) && isset($models[$sortCurrentData[$hash]])) {
@@ -180,10 +180,6 @@ class Serializer extends \yii\rest\Serializer
                 }
             }
         } else {
-
-            $headers = $this->request->getHeaders();
-
-            $x_linkable = $headers->get('X-Linkable');
 
             foreach ($models as $i => $model) {
 
