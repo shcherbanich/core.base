@@ -111,7 +111,7 @@ class StatisticSerializer extends \yii\rest\Serializer
 
             $c_expands = isset($childCallbackExpands[$expand_key]) ? $childCallbackExpands[$expand_key] : [];
 
-            $groupExpandsClass->setModels(json_decode(json_encode($models)));
+            $groupExpandsClass->setModels($models);
 
             $groupExpandsClass->setChildExpands($c_expands);
 
