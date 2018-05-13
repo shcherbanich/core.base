@@ -2,6 +2,7 @@
 
 namespace shcherbanich\core\components\data\rest;
 
+use shcherbanich\core\components\base\GroupExpandInterface;
 use shcherbanich\core\components\Base\Translatable;
 use yii\base\Arrayable;
 use yii\helpers\ArrayHelper;
@@ -56,7 +57,6 @@ class Serializer extends \yii\rest\Serializer
 
                 $className = $model->className();
 
-
                 $sortNeed = [];
 
                 foreach ($models as $i => $model) {
@@ -87,11 +87,20 @@ class Serializer extends \yii\rest\Serializer
 
                 $callbackExpands = [];
 
+                $groupExpandsClasses = [];
+
                 foreach ($expand as $k => $extraField) {
 
                     if (isset($extraFields[$extraField])){
 
-                        $callbackExpands[$extraField] = $extraFields[$extraField];
+                        if(is_object($extraFields[$extraField]) && $extraFields[$extraField] instanceof GroupExpandInterface){
+
+                            $groupExpandsClasses[$extraField] = new $extraFields[$extraField];
+                        }
+                        elseif(is_callable($extraFields)) {
+
+                            $callbackExpands[$extraField] = $extraFields[$extraField];
+                        }
 
                         unset($expand[$k]);
                     }
@@ -140,6 +149,17 @@ class Serializer extends \yii\rest\Serializer
 
                         $models[$i][$key] = $callbackExpand($model);
                     }
+                }
+
+                foreach ($groupExpandsClasses as $expand_key => $groupExpandsClass){
+
+                    $groupExpandsClass->setModels($models);
+
+                    $groupExpandsClass->setExpandKey($expand_key);
+
+                    $groupExpandsClass->process();
+
+                    $models = $groupExpandsClass->getModels();
                 }
 
                 foreach ($sortNeed as $k => $hash) {
