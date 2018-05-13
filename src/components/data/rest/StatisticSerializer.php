@@ -2,6 +2,7 @@
 
 namespace shcherbanich\core\components\data\rest;
 
+use shcherbanich\core\components\base\GroupExpandInterface;
 use yii\base\Arrayable;
 use yii\base\Model;
 use yii\data\DataProviderInterface;
@@ -50,6 +51,8 @@ class StatisticSerializer extends \yii\rest\Serializer
 
         $callbackExpands = [];
 
+        $groupExpandsClasses = [];
+
         $childCallbackExpands = [];
 
         if($this->className) {
@@ -71,7 +74,14 @@ class StatisticSerializer extends \yii\rest\Serializer
 
                 if (isset($extraFields[$extraField])) {
 
-                    $callbackExpands[$extraField] = $extraFields[$extraField];
+                    if(is_object($extraFields[$extraField]) && $extraFields[$extraField] instanceof GroupExpandInterface){
+
+                        $groupExpandsClasses[$extraField] = new $extraFields[$extraField];
+                    }
+                    elseif(is_callable($extraFields)) {
+
+                        $callbackExpands[$extraField] = $extraFields[$extraField];
+                    }
 
                     unset($expand[$k]);
                 } elseif (!in_array($extraField, $extraFields)) {
@@ -95,6 +105,21 @@ class StatisticSerializer extends \yii\rest\Serializer
 
                 $models[$i][$key] = $callbackExpand(json_decode(json_encode($model)), $c_expands);
             }
+        }
+
+        foreach ($groupExpandsClasses as $expand_key => $groupExpandsClass){
+
+            $c_expands = isset($childCallbackExpands[$expand_key]) ? $childCallbackExpands[$expand_key] : [];
+
+            $groupExpandsClass->setModels(json_decode(json_encode($models)));
+
+            $groupExpandsClass->setChildExpands($c_expands);
+
+            $groupExpandsClass->setExpandKey($expand_key);
+
+            $groupExpandsClass->process();
+
+            $models = $groupExpandsClass->getModels();
         }
 
         return $models;
