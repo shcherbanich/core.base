@@ -50,7 +50,7 @@ class IpLimiter implements RateLimitInterface {
 
         $userIp = md5(Yii::$app->request->getUserIP());
 
-        $key = "RateLimit:{$action->id}_{$userIp}";
+        $key = "RateLimit:{$action->uniqueId}_{$userIp}";
 
         $data = $cache->get($key);
 
@@ -82,7 +82,7 @@ class IpLimiter implements RateLimitInterface {
 
             $userIp = md5($ip);
 
-            $key = "RateLimit:{$action->id}_{$userIp}";
+            $key = "RateLimit:{$action->uniqueId}_{$userIp}";
 
             $cache->set($key, $data, 600);
         }
