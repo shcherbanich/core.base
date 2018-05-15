@@ -48,7 +48,7 @@ class ProxyRestServiceController extends \yii\web\Controller
 
         $headers->add('Access-Control-Allow-Origin', '*');
 
-        $headers->add('Access-Control-Allow-Headers', 'Authorization');
+        $headers->add('Access-Control-Allow-Headers', '*');
 
     }
 
