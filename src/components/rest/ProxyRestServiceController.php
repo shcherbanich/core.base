@@ -85,7 +85,7 @@ class ProxyRestServiceController extends \yii\web\Controller
      */
     public function runAction($id, $params = []){
 
-        $action = $this->createAction($id);
+        $action = (new Action($id, $this));
 
         $this->beforeAction($action);
 
