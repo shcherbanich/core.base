@@ -83,78 +83,9 @@ class ProxyRestServiceController extends \yii\web\Controller
     /**
      * @inheritdoc
      */
-    public function runAction($id, $params = []){
+    public function runAction($action_id, $params = []){
 
         $request_method = Yii::$app->request->getMethod();
-
-        $action_id = $id;
-
-        $model_id = Yii::$app->request->get('id');
-
-        if($model_id){
-
-            switch ($request_method){
-
-                case 'GET':
-
-                    $action_id = 'view';
-
-                    break;
-
-                case 'PUT':
-
-                    $action_id = 'update';
-
-                    break;
-
-                case 'PATCH':
-
-                    $action_id = 'update';
-
-                    break;
-
-                case 'DELETE':
-
-                    $action_id = 'delete';
-
-                    break;
-            }
-        }
-        else{
-
-            switch ($request_method){
-
-                case 'GET':
-
-                    $action_id = 'index';
-
-                    break;
-
-                case 'POST':
-
-                    $action_id = 'create';
-
-                    break;
-
-                case 'PUT':
-
-                    $action_id = 'update-all';
-
-                    break;
-
-                case 'PATCH':
-
-                    $action_id = 'update-all';
-
-                    break;
-
-                case 'DELETE':
-
-                    $action_id = 'delete-all';
-
-                    break;
-            }
-        }
 
         $action = (new Action($action_id, $this));
 
@@ -163,6 +94,8 @@ class ProxyRestServiceController extends \yii\web\Controller
         $this->action = $action;
 
         $serviceRequest = new \shcherbanich\core\helpers\microService\Request;
+
+        $id = Yii::$app->request->get('id');
 
         $serviceRequest->setCommand(($id ? "{$this->controllerName}/{$id}" : "{$this->controllerName}" ).'?'.Yii::$app->request->getQueryString());
 
