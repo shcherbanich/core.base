@@ -85,7 +85,78 @@ class ProxyRestServiceController extends \yii\web\Controller
      */
     public function runAction($id, $params = []){
 
-        $action = $this->createAction($id);
+        $request_method = Yii::$app->request->getMethod();
+
+        $action_id = $id;
+
+        $model_id = Yii::$app->request->get('id');
+
+        if($model_id){
+
+            switch ($request_method){
+
+                case 'GET':
+
+                    $action_id = 'view';
+
+                    break;
+
+                case 'PUT':
+
+                    $action_id = 'update';
+
+                    break;
+
+                case 'PATCH':
+
+                    $action_id = 'update';
+
+                    break;
+
+                case 'DELETE':
+
+                    $action_id = 'delete';
+
+                    break;
+            }
+        }
+        else{
+
+            switch ($request_method){
+
+                case 'GET':
+
+                    $action_id = 'index';
+
+                    break;
+
+                case 'POST':
+
+                    $action_id = 'create';
+
+                    break;
+
+                case 'PUT':
+
+                    $action_id = 'update-all';
+
+                    break;
+
+                case 'PATCH':
+
+                    $action_id = 'update-all';
+
+                    break;
+
+                case 'DELETE':
+
+                    $action_id = 'delete-all';
+
+                    break;
+            }
+        }
+
+        $action = (new Action($action_id, $this));
 
         $this->beforeAction($action);
 
@@ -115,7 +186,7 @@ class ProxyRestServiceController extends \yii\web\Controller
 
         $serviceRequest->setParams($sendParams);
 
-        $response = Yii::$app->{$this->serviceName}->sendRequest($serviceRequest, ['method' => Yii::$app->request->getMethod()]);
+        $response = Yii::$app->{$this->serviceName}->sendRequest($serviceRequest, ['method' => $request_method]);
 
         $responseData = $response->getResponseData();
 
