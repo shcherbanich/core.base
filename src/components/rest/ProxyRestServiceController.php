@@ -89,6 +89,8 @@ class ProxyRestServiceController extends \yii\web\Controller
 
         $this->beforeAction($action);
 
+        $this->action = $action;
+
         $serviceRequest = new \shcherbanich\core\helpers\microService\Request;
 
         $serviceRequest->setCommand(($id ? "{$this->controllerName}/{$id}" : "{$this->controllerName}" ).'?'.Yii::$app->request->getQueryString());
