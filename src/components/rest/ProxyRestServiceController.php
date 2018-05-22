@@ -97,7 +97,7 @@ class ProxyRestServiceController extends \yii\web\Controller
 
         $id = Yii::$app->request->get('id');
 
-        $serviceRequest->setCommand(($id ? "{$this->controllerName}/{$id}" : "{$this->controllerName}" ).'?'.Yii::$app->request->getQueryString());
+        $serviceRequest->setCommand(($id ? "{$this->controllerName}/{$id}" : ($action_id ? "{$this->controllerName}/{$action_id}" : "{$this->controllerName}") ).'?'.Yii::$app->request->getQueryString());
 
         Yii::$app->{$this->serviceName}->addRequestHandler('auth', function($request){
 
