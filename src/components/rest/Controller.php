@@ -18,6 +18,8 @@ class Controller extends \yii\rest\Controller
 {
     public $serializer = 'shcherbanich\core\components\data\rest\Serializer';
 
+    public $enableCsrfValidation = false;
+
     public $modelClass = null;
 
     public $conditions = [];
