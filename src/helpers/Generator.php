@@ -4,7 +4,7 @@ namespace shcherbanich\core\helpers;
 
 class Generator
 {
-    public static function convertIntToShortCode($id, $chars)
+    public static function convertIntToShortCode($id, $chars = null)
     {
 
         $chars = $chars ? $chars : "0123456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ_";
