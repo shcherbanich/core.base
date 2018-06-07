@@ -4,10 +4,10 @@ namespace shcherbanich\core\helpers;
 
 class Generator
 {
-    public static function convertIntToShortCode($id)
+    public static function convertIntToShortCode($id, $chars)
     {
 
-        $chars = "0123456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ_";
+        $chars = $chars ? $chars : "0123456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ_";
 
         $chars = preg_split('//', $chars, -1, PREG_SPLIT_NO_EMPTY);
 
