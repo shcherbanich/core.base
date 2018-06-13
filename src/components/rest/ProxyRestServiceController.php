@@ -97,7 +97,7 @@ class ProxyRestServiceController extends \yii\web\Controller
 
         $id = Yii::$app->request->get('id');
 
-        $serviceRequest->setCommand(($id ? "{$this->controllerName}/{$id}" : (!in_array($action_id, [
+        $serviceRequest->setCommand(($id ? "{$this->controllerName}/{$id}".(!in_array($action_id, ['view','update','delete']) ? $action_id : '') : (!in_array($action_id, [
                 'index',
                 'view',
                 'create',
