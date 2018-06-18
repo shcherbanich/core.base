@@ -46,9 +46,15 @@ class ProxyRestServiceController extends \yii\web\Controller
 
         $headers = Yii::$app->response->headers;
 
-        $headers->add('Access-Control-Allow-Origin', '*');
+        $http_origin = isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] ? $_SERVER['HTTP_ORIGIN'] : '*';
 
-        $headers->add('Access-Control-Allow-Headers', '*');
+        $headers->add('Access-Control-Allow-Origin', $http_origin);
+
+        $headers->add('Access-Control-Allow-Credentials', 'true');
+
+        $headers->add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS");
+
+        $headers->add("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, Authorization, Origin, Accept, Time-Offset");
 
     }
 
@@ -67,6 +73,20 @@ class ProxyRestServiceController extends \yii\web\Controller
                 ],
             ]
         ];
+    }
+
+    public function beforeAction($action)
+    {
+        $beforeAction = parent::beforeAction($action);
+
+        if (Yii::$app->request->isOptions && $action->id != 'options') {
+
+            $this->runAction('options');
+
+            return false;
+        }
+
+        return $beforeAction;
     }
 
     public function actions()
