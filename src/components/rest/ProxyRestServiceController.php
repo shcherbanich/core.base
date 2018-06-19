@@ -23,11 +23,6 @@ class ProxyRestServiceController extends \yii\web\Controller
     /**
      * @inheritdoc
      */
-    public $enableCsrfValidation = false;
-
-    /**
-     * @inheritdoc
-     */
     public function init()
     {
         parent::init();
@@ -43,6 +38,8 @@ class ProxyRestServiceController extends \yii\web\Controller
         }
 
         Yii::$app->user->enableSession = false;
+
+        $this->enableCsrfValidation = false;
 
         $headers = Yii::$app->response->headers;
 
