@@ -20,6 +20,8 @@ class ProxyRestServiceController extends \yii\web\Controller
 
     public $serviceName = '';
 
+    public $customParams = [];
+
     /**
      * @inheritdoc
      */
@@ -142,6 +144,8 @@ class ProxyRestServiceController extends \yii\web\Controller
         $sendParams = Yii::$app->getRequest()->getBodyParams();
 
         $sendParams = is_array($sendParams) ? $sendParams : [];
+
+        $sendParams = array_merge($sendParams, $this->customParams);
 
         $serviceRequest->setParams($sendParams);
 
