@@ -244,11 +244,15 @@ class Filter
                     case 'in':
                         $val = explode(',', $value);
 
-                        foreach ($val as &$data) {
+                        foreach ($val as $k => &$data) {
 
                             if($data !== '') {
 
                                 $data = $this->prepareValue($param, $data);
+                            }
+                            else{
+
+                                unset($val[$k]);
                             }
                         }
 
