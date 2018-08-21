@@ -246,7 +246,10 @@ class Filter
 
                         foreach ($val as &$data) {
 
-                            $data = $this->prepareValue($param, $data);
+                            if($data !== '') {
+
+                                $data = $this->prepareValue($param, $data);
+                            }
                         }
 
                         unset($data);
