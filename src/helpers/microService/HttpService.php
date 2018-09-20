@@ -68,7 +68,7 @@ class HttpService implements ServiceInterface {
         $method = isset($options['method']) ? $options['method'] : 'get';
 
         $client = new Client([
-            //'transport' => 'yii\httpclient\CurlTransport',
+            'transport' => 'yii\httpclient\CurlTransport',
             'responseConfig' => [
                 'format' => Client::FORMAT_JSON
             ],
