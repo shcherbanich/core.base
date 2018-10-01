@@ -8,7 +8,7 @@ use yii\db\ActiveQuery;
 use yii\db\ActiveRecordInterface;
 use yii\web\Response;
 use yii\filters\Cors;
-use yii\data\ActiveDataProvider;
+use shcherbanich\core\components\data\ActiveDataProvider;
 use yii\data\Sort;
 use yii\data\Pagination;
 use shcherbanich\core\components\data\Filter;
