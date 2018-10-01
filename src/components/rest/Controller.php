@@ -170,59 +170,37 @@ class Controller extends \yii\rest\Controller
      */
     public function findModel($id, $query = null)
     {
+        $modelClass = new $query->modelClass;
 
-        if ($query) {
-
-            $modelClass = new $query->modelClass;
-        } else {
-
-            $modelClass = new $this->modelClass;
+        if (!$query) {
 
             $query = $modelClass::find();
         }
 
-        try {
+        $keys = $modelClass::primaryKey();
 
-            $keys = $modelClass::primaryKey();
+        if (count($keys) > 1) {
 
-            $filter = new Filter();
+            $values = explode(',', $id);
 
-            $modelClass = new $modelClass;
+            if (count($keys) === count($values)) {
 
-            $fields = $modelClass->fields();
+                foreach ($keys as $k => $key) {
 
-            $attributes = $modelClass->attributes();
-
-            $query = $filter
-                ->setQuery($query)
-                ->setConditions($this->conditions, $modelClass::tableName())
-                ->setAvailableAttributes($fields ? $fields : $attributes)
-                ->getQuery();
-
-            if (count($keys) > 1) {
-
-                $values = explode(',', $id);
-
-                if (count($keys) === count($values)) {
-
-                    foreach ($keys as $k => $key) {
-
-                        $query->andWhere(["{$modelClass::tableName()}.{$key}" => $values[$k]]);
-                    }
-
-                    $model = $query->one();
+                    $query->andWhere(["{$modelClass::tableName()}.{$key}" => $values[$k]]);
                 }
 
-            } elseif ($id) {
-
-                $key = current($keys);
-
-                $model = $query
-                    ->andWhere(["{$modelClass::tableName()}.{$key}" => $id])
-                    ->one();
+                $model = $query->one();
             }
+
+        } elseif ($id) {
+
+            $key = current($keys);
+
+            $model = $query
+                ->andWhere(["{$modelClass::tableName()}.{$key}" => $id])
+                ->one();
         }
-        catch(\Exception $e){}
 
         if (!isset($model)) {
 
