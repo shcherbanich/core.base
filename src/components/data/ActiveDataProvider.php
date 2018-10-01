@@ -3,7 +3,7 @@
 namespace shcherbanich\core\components\data;
 
 use Yii;
-use yii\base\Component;
+use yii\base\BaseObject;
 use yii\base\InvalidParamException;
 use yii\data\DataProviderInterface;
 use yii\data\Pagination;
@@ -47,7 +47,7 @@ use yii\db\QueryInterface;
  *
  * For more details and usage information on ActiveDataProvider, see the [guide article on data providers](guide:output-data-providers).
  */
-class ActiveDataProvider extends Component implements DataProviderInterface
+class ActiveDataProvider extends BaseObject implements DataProviderInterface
 {
 
     /**
