@@ -3,7 +3,6 @@
 namespace shcherbanich\core\components\data;
 
 use Yii;
-use yii\base\BaseObject;
 use yii\base\InvalidParamException;
 use yii\data\DataProviderInterface;
 use yii\data\Pagination;
@@ -47,13 +46,9 @@ use yii\db\QueryInterface;
  *
  * For more details and usage information on ActiveDataProvider, see the [guide article on data providers](guide:output-data-providers).
  */
-class ActiveDataProvider extends BaseObject implements DataProviderInterface
+class ActiveDataProviderLight implements DataProviderInterface
 {
 
-    /**
-     * @var int Number of data providers on the current page. Used to generate unique IDs.
-     */
-    private static $counter = 0;
     /**
      * @var string an ID that uniquely identifies the data provider among all data providers.
      * Generated automatically the following way in case it is not set:
@@ -69,26 +64,12 @@ class ActiveDataProvider extends BaseObject implements DataProviderInterface
     private $_models;
     private $_totalCount;
 
-
-    /**
-     * @inheritdoc
-     */
-    public function init()
-    {
-        parent::init();
-        if ($this->id === null) {
-            if (self::$counter > 0) {
-                $this->id = 'dp-' . self::$counter;
-            }
-            self::$counter++;
-        }
-    }
-
     /**
      * @var QueryInterface the query that is used to fetch data models and [[totalCount]]
      * if it is not explicitly set.
      */
     public $query;
+
     /**
      * @var string|callable the column that is used as the key of the data models.
      * This can be either a column name, or a callable that returns the key value of a given data model.

@@ -3,12 +3,12 @@
 namespace shcherbanich\core\components\rest;
 
 use shcherbanich\core\components\Base\Translatable;
+use shcherbanich\core\components\data\ActiveDataProviderLight;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecordInterface;
 use yii\web\Response;
 use yii\filters\Cors;
-use shcherbanich\core\components\data\ActiveDataProvider;
 use yii\data\Sort;
 use yii\data\Pagination;
 use shcherbanich\core\components\data\Filter;
@@ -142,15 +142,17 @@ class Controller extends \yii\rest\Controller
             }
         }
 
-        $data = new ActiveDataProvider([
-            'query' => $query,
-            'pagination' => new Pagination([
-                'pageSize' => $this->pageSize
-            ]),
-            'sort' => new Sort([
-                'attributes' => $fields
-            ])
-        ]);
+        $data = new ActiveDataProviderLight;
+
+        $data->query = $query;
+
+        $data->setPagination(new Pagination([
+            'pageSize' => $this->pageSize
+        ]));
+
+        $data->setSort(new Sort([
+            'attributes' => $fields
+        ]));
 
         $data->setTotalCount($count);
 
