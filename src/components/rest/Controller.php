@@ -170,9 +170,12 @@ class Controller extends \yii\rest\Controller
      */
     public function findModel($id, $query = null)
     {
-        $modelClass = new $query->modelClass;
+        if ($query) {
 
-        if (!$query) {
+            $modelClass = new $query->modelClass;
+        } else {
+
+            $modelClass = new $this->modelClass;
 
             $query = $modelClass::find();
         }
