@@ -17,18 +17,68 @@ class Serializer extends \yii\rest\Serializer
      */
     protected function serializeModel($model)
     {
-        $serialized_model = parent::serializeModel($model);
+        if ($this->request->getIsHead()) {
 
-        $headers = $this->request->getHeaders();
+            return null;
+        }
 
-        $x_linkable = $headers->get('X-Linkable');
+        list($fields, $expand) = $this->getRequestedFields();
+
+        $extraFields = $model->extraFields();
+
+        $callbackExpands = [];
+
+        $groupExpandsClasses = [];
+
+        foreach ($expand as $k => $extraField) {
+
+            if (isset($extraFields[$extraField])) {
+
+                if (is_object($extraFields[$extraField]) && $extraFields[$extraField] instanceof GroupExpandInterface) {
+
+                    $groupExpandsClasses[$extraField] = new $extraFields[$extraField];
+
+                } elseif (is_callable($extraFields[$extraField])) {
+
+                    $callbackExpands[$extraField] = $extraFields[$extraField];
+                }
+
+                unset($expand[$k]);
+
+            } elseif (!in_array($extraField, $extraFields)) {
+
+                unset($expand[$k]);
+            }
+        }
+
+        $serialized_model = $model->toArray($fields, $expand);
 
         if ($model instanceof Translatable) {
 
             $serialized_model = $model::translate($serialized_model, \Yii::$app->language);
         }
 
-        if ($x_linkable !== 'enabled') {
+        foreach ($callbackExpands as $key => $callbackExpand) {
+
+            $serialized_model[$key] = $callbackExpand($serialized_model);
+        }
+
+        foreach ($groupExpandsClasses as $expand_key => $groupExpandsClass) {
+
+            $groupExpandsClass->setModels([$serialized_model]);
+
+            $groupExpandsClass->setExpandKey($expand_key);
+
+            $groupExpandsClass->process();
+
+            $serialized_model = $groupExpandsClass->getModels()[0];
+        }
+
+        $headers = $this->request->getHeaders();
+
+        $x_linkable = $headers->get('X-Linkable');
+
+        if ('enabled' !== $x_linkable) {
 
             unset($serialized_model['_links']);
         }
