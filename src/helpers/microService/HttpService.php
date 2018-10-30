@@ -79,7 +79,8 @@ class HttpService implements ServiceInterface {
 
         $httpRequest->addOptions([
             'timeout' => 15,
-            'sslVerifyPeer' => false
+            'sslVerifyPeer' => false,
+            'sslVerifyPeerName' => false
         ]);
 
         $httpRequest->setMethod($method);
