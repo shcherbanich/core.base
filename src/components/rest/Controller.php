@@ -26,6 +26,9 @@ class Controller extends \yii\rest\Controller
 
     protected $pageSize = 10;
 
+    /**
+     * @inheritdoc
+     */
     public function init()
     {
         parent::init();
@@ -45,6 +48,9 @@ class Controller extends \yii\rest\Controller
         $headers->add('Access-Control-Allow-Credentials', 'true');
     }
 
+    /**
+     * @inheritdoc
+     */
     public function prepareQuery($query = null){
 
         if ($query) {
@@ -108,6 +114,9 @@ class Controller extends \yii\rest\Controller
             ->getQuery();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function prepareDataProvider($query = null, $prepareQuery = true)
     {
         if (Yii::$app->request->isPost) {
@@ -215,6 +224,9 @@ class Controller extends \yii\rest\Controller
         return $model;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         $behaviors = parent::behaviors();
@@ -251,6 +263,9 @@ class Controller extends \yii\rest\Controller
         return $behaviors;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function actions()
     {
         $actions = parent::actions();
@@ -386,6 +401,9 @@ class Controller extends \yii\rest\Controller
         return $response;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function beforeAction($action)
     {
         $beforeAction = parent::beforeAction($action);
@@ -398,6 +416,15 @@ class Controller extends \yii\rest\Controller
         }
 
         return $beforeAction;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function afterAction($action, $result)
+    {
+
+        return parent::afterAction($action, $this->serializeData($result));
     }
 
     protected function createScopeString(array $scopes = [])
