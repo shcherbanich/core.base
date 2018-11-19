@@ -185,15 +185,6 @@ class ProxyRestServiceController extends \yii\web\Controller
             }
         }
 
-        return $this->afterAction($action, $result);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function afterAction($action, $result)
-    {
-
         return parent::afterAction($action, $this->serializeData($result));
     }
 
