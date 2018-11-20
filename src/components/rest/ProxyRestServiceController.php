@@ -131,7 +131,11 @@ class ProxyRestServiceController extends \yii\web\Controller
 
             foreach(\Yii::$app->request->headers as $name => $headers){
 
-                $request->addHeaders(['x-system-proxy-service' => '1']);
+                exec('hostname', $out, $ret);
+
+                $server = $out[0];
+
+                $request->addHeaders(['x-system-proxy-server' => $server]);
 
                 if(in_array($name, ['authorization', 'content-type', 'user-agent', 'origin', 'referer', 'x-forwarded-for'])) {
 
