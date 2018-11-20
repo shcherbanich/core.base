@@ -131,7 +131,7 @@ class ProxyRestServiceController extends \yii\web\Controller
 
             foreach(\Yii::$app->request->headers as $name => $headers){
 
-                if(in_array($name, ['authorization', 'content-type', 'user-agent'])) {
+                if(in_array($name, ['authorization', 'content-type', 'user-agent', 'origin', 'referer', 'x-forwarded-for'])) {
 
                     foreach($headers as $header){
 
