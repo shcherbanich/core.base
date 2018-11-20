@@ -135,6 +135,28 @@ class ProxyRestServiceController extends \yii\web\Controller
 
                 $server = $out[0];
 
+                $ip = Yii::$app->request->headers->get('x-system-proxy-real-ip');
+
+                if(!$ip) {
+
+                    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+
+                        $ip = $_SERVER['HTTP_CLIENT_IP'];
+
+                    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+
+                        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+
+                    } else {
+
+                        $ip = $_SERVER['REMOTE_ADDR'];
+                    }
+                }
+
+                $ip = explode(',', $ip)[0];
+
+                $request->addHeaders(['x-system-proxy-real-ip' => $ip]);
+
                 $request->addHeaders(['x-system-proxy-server' => $server]);
 
                 $proxy_depth = Yii::$app->request->headers->get('x-system-proxy-depth', 0) * 1;
