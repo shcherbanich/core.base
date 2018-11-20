@@ -137,6 +137,10 @@ class ProxyRestServiceController extends \yii\web\Controller
 
                 $request->addHeaders(['x-system-proxy-server' => $server]);
 
+                $proxy_depth = Yii::$app->request->headers->get('x-system-proxy-depth', 0) * 1;
+
+                $request->addHeaders(['x-system-proxy-depth' => $proxy_depth + 1]);
+
                 if(in_array($name, ['authorization', 'content-type', 'user-agent', 'origin', 'referer', 'x-forwarded-for'])) {
 
                     foreach($headers as $header){
