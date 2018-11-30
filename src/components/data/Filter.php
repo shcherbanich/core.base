@@ -234,11 +234,21 @@ class Filter
                         break;
 
                     case 'like':
-                        $this->query->andWhere(['like', "LOWER($param)", mb_strtolower($this->prepareValue($param, $value), 'UTF-8')]);
+
+                        if($this->strictTypes[$param] == 'string') {
+
+                            $this->query->andWhere(['like', "LOWER($param)", mb_strtolower($this->prepareValue($param, $value), 'UTF-8')]);
+                        }
+
                         break;
 
                     case 'not like':
-                        $this->query->andWhere(['not like', "LOWER($param)", mb_strtolower($this->prepareValue($param, $value), 'UTF-8')]);
+
+                        if($this->strictTypes[$param] == 'string') {
+
+                            $this->query->andWhere(['not like', "LOWER($param)", mb_strtolower($this->prepareValue($param, $value), 'UTF-8')]);
+                        }
+
                         break;
 
                     case 'in':
