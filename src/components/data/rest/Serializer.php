@@ -5,6 +5,7 @@ namespace shcherbanich\core\components\data\rest;
 use shcherbanich\core\components\base\GroupExpandInterface;
 use shcherbanich\core\components\Base\Translatable;
 use yii\base\Arrayable;
+use yii\db\ActiveRecordInterface;
 use yii\helpers\ArrayHelper;
 
 class Serializer extends \yii\rest\Serializer
@@ -109,122 +110,123 @@ class Serializer extends \yii\rest\Serializer
 
                 $model = current($models);
 
-                $className = $model->className();
+                if($model instanceof ActiveRecordInterface) {
 
-                $sortNeed = [];
+                    $className = $model->className();
 
-                foreach ($models as $i => $model) {
+                    $sortNeed = [];
+
+                    foreach ($models as $i => $model) {
+
+                        $pk = $model->getPrimaryKey(true);
+
+                        foreach ($pk as $key => $value) {
+
+                            $primaryKeys[$model->tableName() . ".$key"][$value] = $value;
+                        }
+
+                        $keyHash = md5(json_encode($pk));
+
+                        if (!isset($sortNeed[$keyHash])) {
+
+                            $sortNeed[$i] = $keyHash;
+                        } else {
+
+                            $sortNeed[$i] = $keyHash . sha1(json_encode($pk));
+                        }
+                    }
+
+                    $model = new $className;
+
+                    $extraFields = $model->extraFields();
 
                     $pk = $model->getPrimaryKey(true);
 
-                    foreach ($pk as $key => $value) {
+                    $callbackExpands = [];
 
-                        $primaryKeys[$model->tableName() . ".$key"][$value] = $value;
-                    }
+                    $groupExpandsClasses = [];
 
-                    $keyHash = md5(json_encode($pk));
+                    foreach ($expand as $k => $extraField) {
 
-                    if (!isset($sortNeed[$keyHash])) {
+                        if (isset($extraFields[$extraField])) {
 
-                        $sortNeed[$i] = $keyHash;
-                    } else {
+                            if (is_object($extraFields[$extraField]) && $extraFields[$extraField] instanceof GroupExpandInterface) {
 
-                        $sortNeed[$i] = $keyHash . sha1(json_encode($pk));
-                    }
-                }
+                                $groupExpandsClasses[$extraField] = new $extraFields[$extraField];
+                            } elseif (is_callable($extraFields[$extraField])) {
 
-                $model = new $className;
+                                $callbackExpands[$extraField] = $extraFields[$extraField];
+                            }
 
-                $extraFields = $model->extraFields();
+                            unset($expand[$k]);
+                        } elseif (!in_array($extraField, $extraFields)) {
 
-                $pk = $model->getPrimaryKey(true);
-
-                $callbackExpands = [];
-
-                $groupExpandsClasses = [];
-
-                foreach ($expand as $k => $extraField) {
-
-                    if (isset($extraFields[$extraField])){
-
-                        if(is_object($extraFields[$extraField]) && $extraFields[$extraField] instanceof GroupExpandInterface){
-
-                            $groupExpandsClasses[$extraField] = new $extraFields[$extraField];
+                            unset($expand[$k]);
                         }
-                        elseif(is_callable($extraFields[$extraField])) {
+                    }
 
-                            $callbackExpands[$extraField] = $extraFields[$extraField];
+                    $models = $model->find()
+                        ->joinWith($expand)
+                        ->where($primaryKeys)
+                        ->all();
+
+                    $sortCurrentData = [];
+
+                    foreach ($models as $i => $model) {
+
+                        $c_pk = [];
+
+                        foreach ($pk as $k => $v) {
+
+                            $c_pk[$k] = $model[$k];
                         }
 
-                        unset($expand[$k]);
-                    }
-                    elseif (!in_array($extraField, $extraFields)) {
+                        $keyHash = md5(json_encode($c_pk));
 
-                        unset($expand[$k]);
-                    }
-                }
+                        if (!isset($sortCurrentData[$keyHash])) {
 
-                $models = $model->find()
-                    ->joinWith($expand)
-                    ->where($primaryKeys)
-                    ->all();
+                            $sortCurrentData[$keyHash] = $i;
+                        } else {
 
-                $sortCurrentData = [];
+                            $sortCurrentData[$keyHash . sha1(json_encode($pk))] = $i;
+                        }
 
-                foreach ($models as $i => $model) {
+                        if ($model instanceof Arrayable) {
 
-                    $c_pk = [];
+                            $models[$i] = $model->toArray($fields, $expand);
 
-                    foreach($pk as $k=>$v){
+                        } elseif (is_array($model)) {
 
-                        $c_pk[$k] = $model[$k];
-                    }
+                            $models[$i] = ArrayHelper::toArray($model);
+                        }
 
-                    $keyHash = md5(json_encode($c_pk));
+                        foreach ($callbackExpands as $key => $callbackExpand) {
 
-                    if (!isset($sortCurrentData[$keyHash])) {
-
-                        $sortCurrentData[$keyHash] = $i;
-                    } else {
-
-                        $sortCurrentData[$keyHash . sha1(json_encode($pk))] = $i;
+                            $models[$i][$key] = $callbackExpand($model);
+                        }
                     }
 
-                    if ($model instanceof Arrayable) {
+                    foreach ($groupExpandsClasses as $expand_key => $groupExpandsClass) {
 
-                        $models[$i] = $model->toArray($fields, $expand);
+                        $groupExpandsClass->setModels($models);
 
-                    } elseif (is_array($model)) {
+                        $groupExpandsClass->setExpandKey($expand_key);
 
-                        $models[$i] = ArrayHelper::toArray($model);
+                        $groupExpandsClass->process();
+
+                        $models = $groupExpandsClass->getModels();
                     }
 
-                    foreach($callbackExpands as $key => $callbackExpand){
+                    foreach ($sortNeed as $k => $hash) {
 
-                        $models[$i][$key] = $callbackExpand($model);
-                    }
-                }
+                        if (isset($sortCurrentData[$hash]) && isset($models[$sortCurrentData[$hash]])) {
 
-                foreach ($groupExpandsClasses as $expand_key => $groupExpandsClass){
+                            $returnModels[$k] = $models[$sortCurrentData[$hash]];
 
-                    $groupExpandsClass->setModels($models);
+                            if ($x_linkable !== 'enabled') {
 
-                    $groupExpandsClass->setExpandKey($expand_key);
-
-                    $groupExpandsClass->process();
-
-                    $models = $groupExpandsClass->getModels();
-                }
-
-                foreach ($sortNeed as $k => $hash) {
-
-                    if (isset($sortCurrentData[$hash]) && isset($models[$sortCurrentData[$hash]])) {
-
-                        $returnModels[$k] = $models[$sortCurrentData[$hash]];
-
-                        if($x_linkable !== 'enabled'){
-
-                            unset($returnModels[$k]['_links']);
+                                unset($returnModels[$k]['_links']);
+                            }
                         }
                     }
                 }
