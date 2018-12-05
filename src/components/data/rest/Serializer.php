@@ -5,6 +5,8 @@ namespace shcherbanich\core\components\data\rest;
 use shcherbanich\core\components\base\GroupExpandInterface;
 use shcherbanich\core\components\Base\Translatable;
 use yii\base\Arrayable;
+use yii\base\Model;
+use yii\data\DataProviderInterface;
 use yii\db\ActiveRecordInterface;
 use yii\helpers\ArrayHelper;
 
@@ -261,5 +263,23 @@ class Serializer extends \yii\rest\Serializer
         }
 
         return $returnModels;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function serialize($data)
+    {
+        if ($data instanceof Model && $data->hasErrors()) {
+            return $this->serializeModelErrors($data);
+        } elseif ($data instanceof Arrayable) {
+            return $this->serializeModel($data);
+        } elseif ($data instanceof DataProviderInterface) {
+            return $this->serializeDataProvider($data);
+        } elseif (is_array($data) && isset($data[0]) && $data[0] instanceof Arrayable) {
+            return $this->serializeModels($data);
+        }
+
+        return $data;
     }
 }
