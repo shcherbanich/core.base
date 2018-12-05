@@ -232,6 +232,46 @@ class Serializer extends \yii\rest\Serializer
                         }
                     }
                 }
+                elseif($model instanceof Model) {
+
+                    $extraFields = $model->extraFields();
+
+                    $groupExpandsClasses = [];
+
+                    foreach ($expand as $k => $extraField) {
+
+                        if (isset($extraFields[$extraField])) {
+
+                            if (is_object($extraFields[$extraField]) && $extraFields[$extraField] instanceof GroupExpandInterface) {
+
+                                $groupExpandsClasses[$extraField] = new $extraFields[$extraField];
+                            } elseif (is_callable($extraFields[$extraField])) {
+
+                                $callbackExpands[$extraField] = $extraFields[$extraField];
+                            }
+
+                            unset($expand[$k]);
+                        } elseif (!in_array($extraField, $extraFields)) {
+
+                            unset($expand[$k]);
+                        }
+                    }
+
+                    $models = ArrayHelper::toArray($models);
+
+                    foreach ($groupExpandsClasses as $expand_key => $groupExpandsClass) {
+
+                        $groupExpandsClass->setModels($models);
+
+                        $groupExpandsClass->setExpandKey($expand_key);
+
+                        $groupExpandsClass->process();
+
+                        $models = $groupExpandsClass->getModels();
+                    }
+
+                    $returnModels = $models;
+                }
                 else{
 
                     $returnModels = $models;
