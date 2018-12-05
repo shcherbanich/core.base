@@ -235,7 +235,11 @@ class Filter
 
                     case 'like':
 
-                        if($this->strictTypes[$param] == 'string') {
+                        $param_name = explode('.', $param);
+
+                        $param_name = end($param_name);
+
+                        if(!$this->strictTypes || (isset($this->strictTypes[$param_name]) && $this->strictTypes[$param_name] == 'string')) {
 
                             $this->query->andWhere(['like', "LOWER($param)", mb_strtolower($this->prepareValue($param, $value), 'UTF-8')]);
                         }
@@ -244,7 +248,11 @@ class Filter
 
                     case 'not like':
 
-                        if($this->strictTypes[$param] == 'string') {
+                        $param_name = explode('.', $param);
+
+                        $param_name = end($param_name);
+
+                        if(!$this->strictTypes || (isset($this->strictTypes[$param_name]) && $this->strictTypes[$param_name] == 'string')) {
 
                             $this->query->andWhere(['not like', "LOWER($param)", mb_strtolower($this->prepareValue($param, $value), 'UTF-8')]);
                         }
