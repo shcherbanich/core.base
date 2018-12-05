@@ -230,6 +230,10 @@ class Serializer extends \yii\rest\Serializer
                         }
                     }
                 }
+                else{
+
+                    $returnModels = $models;
+                }
             }
         } else {
 
