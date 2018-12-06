@@ -1,6 +1,6 @@
 <?php
 
-namespace shcherbanich\ordinec\helpers;
+namespace shcherbanich\core\helpers;
 
 use Yii;
 
