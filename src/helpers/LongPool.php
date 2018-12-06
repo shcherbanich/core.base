@@ -17,7 +17,7 @@ class LongPool
     public static function generateChannelData($prefix = '')
     {
         return [
-            'channel' => $prefix.Yii::$app->security->generateRandomString(50),
+            'channel' => $prefix.Yii::$app->security->generateRandomString(255),
             'expires_in' => time() + 3600
         ];
     }
