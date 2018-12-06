@@ -10,12 +10,14 @@ class LongPool
     /**
      * Сгенерировать канал
      *
+     * @var string $prefix
+     *
      * @return array
      */
-    public static function generateChannelData()
+    public static function generateChannelData($prefix = '')
     {
         return [
-            'channel' => Yii::$app->security->generateRandomString(),
+            'channel' => $prefix.Yii::$app->security->generateRandomString(),
             'expires_in' => time() + 3600
         ];
     }
