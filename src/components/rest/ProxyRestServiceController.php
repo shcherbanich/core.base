@@ -46,7 +46,7 @@ class ProxyRestServiceController extends \yii\web\Controller
      */
     public function getQueryString(){
 
-        return $this->queryString ? $this->customQueryString : Yii::$app->request->getQueryString();
+        return $this->queryString ? $this->queryString : Yii::$app->request->getQueryString();
     }
 
     /**
