@@ -20,7 +20,34 @@ class ProxyRestServiceController extends \yii\web\Controller
 
     public $serviceName = '';
 
+    public $queryString = '';
+
     public $customParams = [];
+
+    /**
+     * Установить query string
+     *
+     * @param string $queryString
+     *
+     * @return void
+     */
+    public function setQueryString($queryString){
+
+        if(is_string($queryString)) {
+
+            $this->queryString = $queryString;
+        }
+    }
+
+    /**
+     * Получить query string
+     *
+     * @return string
+     */
+    public function getQueryString(){
+
+        return $this->queryString ? $this->customQueryString : Yii::$app->request->getQueryString();
+    }
 
     /**
      * @inheritdoc
@@ -125,7 +152,7 @@ class ProxyRestServiceController extends \yii\web\Controller
                 'options',
                 'update-all',
                 'delete-all'
-            ]) ? "{$this->controllerName}/{$action_id}" : "{$this->controllerName}") ).'?'.Yii::$app->request->getQueryString());
+            ]) ? "{$this->controllerName}/{$action_id}" : "{$this->controllerName}") ).'?'.$this->getQueryString());
 
         Yii::$app->{$this->serviceName}->addRequestHandler('auth', function($request){
 
