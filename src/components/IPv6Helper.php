@@ -22,6 +22,7 @@ class IPv6Helper {
      * @return string The uncompressed IPv6 address
      */
     public static function uncompress($ip) {
+
         if (substr_count($ip, '::') !== 1) {
             return $ip;
         }
@@ -52,6 +53,21 @@ class IPv6Helper {
         }
         return $ip;
     }
+
+    /**
+     * Expand an IPv6 address
+     * @param string $ip An IPv6 address
+     * @return string The expanded IPv6 address
+     */
+    public static function expand($ip) {
+
+        $hex = unpack("H*hex", inet_pton($ip));
+
+        $ip = substr(preg_replace("/([A-f0-9]{4})/", "$1:", $hex['hex']), 0, -1);
+
+        return $ip;
+    }
+
     /**
      * Compresses an IPv6 address
      *
