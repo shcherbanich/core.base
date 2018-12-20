@@ -27,13 +27,7 @@ class Text
     public static function uncompress($compressedText)
     {
 
-        try {
-
-            return gzuncompress(base64_decode($compressedText, 9));
-
-        } catch (\Exception $e) {}
-
-        return '';
+        return gzuncompress(base64_decode($compressedText, 9));
     }
 
     /**
